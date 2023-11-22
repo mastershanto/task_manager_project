@@ -15,6 +15,7 @@ class NewTasksScreen extends StatefulWidget {
 }
 
 class _NewTasksScreenState extends State<NewTasksScreen> {
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -23,7 +24,8 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
         onPressed: () {
           Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AddNewTaskScreen()));
+              MaterialPageRoute(
+                  builder: (context) => const AddNewTaskScreen()));
         },
         child: const Icon(Icons.add),
       ),

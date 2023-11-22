@@ -1,8 +1,12 @@
+
+
+
 import 'package:flutter/material.dart';
 import 'package:task_manager_project/ui/controllers/auth_controller.dart';
 import 'package:task_manager_project/ui/ui_screens/login_screen.dart';
 import '../ui_screens/update_profile_screen.dart';
 
+///todo: Make the ProfileSummaryCard as Stateful Widget
 class ProfileSummaryCard extends StatefulWidget {
    const ProfileSummaryCard({super.key, this.enableOnLongTab = true});
 

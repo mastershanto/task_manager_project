@@ -63,6 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                       decoration: const InputDecoration(
                         hintText: "Email",
+                        prefixIcon: Icon(Icons.email_outlined),
                       ),
                     ),
                     const SizedBox(
@@ -111,10 +112,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         if (value?.trim().isEmpty ?? true) {
                           return "Enter your mobile number!";
                         }
-                        if(value!.length!=11){
+                        if (value!.length != 11) {
                           return "Mobile number must be 11 digit.!";
                         }
-                        if(int.tryParse(value)==null){
+                        if (int.tryParse(value) == null) {
                           return "Mobile number must be numeric(a-z or A-Z).!";
                         }
 
@@ -148,19 +149,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       height: 16,
                     ),
                     SizedBox(
-                        width: double.infinity,
-                        child: Visibility(
-                          visible: _signUpInProgress == false,
-                          replacement: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                          child: ElevatedButton(
-                              onPressed: () {
-                                _signUp();
-                              },
-                              child: const Icon(
-                                  Icons.arrow_circle_right_outlined)),
-                        )),
+                      width: double.infinity,
+                      child: Visibility(
+                        visible: _signUpInProgress == false,
+                        replacement: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              _signUp();
+                            },
+                            child:
+                                const Icon(Icons.arrow_circle_right_outlined)),
+                      ),
+                    ),
                     const SizedBox(
                       height: 48,
                     ),

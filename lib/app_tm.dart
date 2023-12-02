@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'ui/ui_screens/splash_screen.dart';
+import 'ui/ui_screens/profile_screens/splash_screen.dart';
 
 
 class TaskManagerApp extends StatelessWidget {
   const TaskManagerApp({super.key});
 
+  static GlobalKey<NavigatorState> navigationKey=GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigationKey,
       home: const SplashScreen(),
       title: "Task Manager App",
       theme: ThemeData(
@@ -29,7 +32,7 @@ class TaskManagerApp extends StatelessWidget {
         primarySwatch: Colors.green,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 12),
+            padding: const EdgeInsets.symmetric(vertical: 12),
 
           )
         )

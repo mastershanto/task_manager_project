@@ -1,7 +1,9 @@
 
 
 import 'package:flutter/material.dart';
-import 'New_tasks_screen.dart';
+import 'package:task_manager_project/data/models/task_list_model.dart';
+import '../../../data/models/task.dart';
+import 'new_tasks_screen.dart';
 import 'Progress_tasks_screen.dart';
 import 'cancelled_tasks_screen.dart';
 import 'completed_tasks_screen.dart';
@@ -14,8 +16,9 @@ class MainBottomNevScreen extends StatefulWidget {
 }
 
 class _MainBottomNevScreenState extends State<MainBottomNevScreen> {
+
   int _selectedIndex=0;
-  final List<Widget> _screens=const<Widget>[
+  final List<Widget> _screens=<Widget>[
     NewTasksScreen(),
     ProgressTasksScreen(),
     CompletedTaskScreen(),

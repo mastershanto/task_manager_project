@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../ui_widgets/body_background.dart';
+import '../../ui_widgets/body_background.dart';
 import 'pin_verification_screen.dart';
 import 'sign_up_screen.dart';
 

@@ -2,9 +2,10 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:task_manager_project/ui/controllers/auth_controller.dart';
-import 'package:task_manager_project/ui/ui_screens/login_screen.dart';
-import '../ui_screens/update_profile_screen.dart';
+
+import '../controllers/auth_controller.dart';
+import '../ui_screens/profile_screens/login_screen.dart';
+import '../ui_screens/profile_screens/update_profile_screen.dart';
 
 ///todo: Make the ProfileSummaryCard as Stateful Widget
 class ProfileSummaryCard extends StatefulWidget {
@@ -44,75 +45,84 @@ class _ProfileSummaryCardState extends State<ProfileSummaryCard> {
             style: const TextStyle(color: Colors.white)),
         trailing: IconButton(
           onPressed: () {
-            showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return logoutAndEditDialogBar(context);
-              },
-            );
+            // showDialog<void>(
+            //   context: context,
+            //   builder: (BuildContext context) {
+            //     return logoutAndEditDialogBar(context);
+            //   },
+            // );
+
+            AuthController.clearAuthData();
+
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    (route) => false);
+
           },
           icon: const Icon(
-            Icons.more_vert,
-            size: 40,
+            // Icons.more_vert,
+            Icons.logout,
+            size: 35,
           ),
 // - icon: const Icon(Icons.logout),),
         ));
   }
 
-  SimpleDialog logoutAndEditDialogBar(context) {
-    return SimpleDialog(
-      title: const Text('Options'),
-      children: <Widget>[
-        const SizedBox(
-          height: 16,
-        ),
-        ListTile(
-          onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const UpdateProfileScreen(),
-                  )
-              );
-
-          },
-          leading: const Icon(Icons.edit),
-          title: const Text(
-            "Update Profile",
-            style: TextStyle(color: Colors.green),
-          ),
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        ListTile(
-          onTap: () {
-            AuthController.clearAuthData();
-
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false);
-
-          },
-          leading: const Icon(Icons.logout),
-          title: const Text(
-            "Logout",
-            style: TextStyle(color: Colors.blue),
-          ),
-        ),
-        ListTile(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          trailing: const Text(
-            "Close",
-            style: TextStyle(color: Colors.red),
-          ),
-        ),
-      ],
-    );
-  }
+  // SimpleDialog logoutAndEditDialogBar(context) {
+  //   return SimpleDialog(
+  //     title: const Text('Options'),
+  //     children: <Widget>[
+  //       const SizedBox(
+  //         height: 16,
+  //       ),
+  //       ListTile(
+  //         onTap: () {
+  //             Navigator.push(
+  //                 context,
+  //                 MaterialPageRoute(
+  //                   builder: (context) => const UpdateProfileScreen(),
+  //                 )
+  //             );
+  //
+  //         },
+  //         leading: const Icon(Icons.edit),
+  //         title: const Text(
+  //           "Update Profile",
+  //           style: TextStyle(color: Colors.green),
+  //         ),
+  //       ),
+  //       const SizedBox(
+  //         height: 8,
+  //       ),
+  //       ListTile(
+  //         onTap: () {
+  //           AuthController.clearAuthData();
+  //
+  //             Navigator.pushAndRemoveUntil(
+  //                 context,
+  //                 MaterialPageRoute(builder: (context) => const LoginScreen()),
+  //                 (route) => false);
+  //
+  //         },
+  //         leading: const Icon(Icons.logout),
+  //         title: const Text(
+  //           "Logout",
+  //           style: TextStyle(color: Colors.blue),
+  //         ),
+  //       ),
+  //       ListTile(
+  //         onTap: () {
+  //           Navigator.of(context).pop();
+  //         },
+  //         trailing: const Text(
+  //           "Close",
+  //           style: TextStyle(color: Colors.red),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   String get fullName{
     return "${AuthController.user?.firstName??""} ${AuthController.user?.lastName ??""}";

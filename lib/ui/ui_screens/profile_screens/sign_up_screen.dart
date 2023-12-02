@@ -4,11 +4,11 @@
 // validate the mobile no with 11 digits
 
 import 'package:flutter/material.dart';
-import '../../data/network_caller/network_caller.dart';
-import '../../data/network_caller/network_response.dart';
-import '../../data/utility/urls.dart';
-import '../ui_widgets/body_background.dart';
-import '../ui_widgets/snack_message.dart';
+import '../../../data/network_caller/network_caller.dart';
+import '../../../data/network_caller/network_response.dart';
+import '../../../data/utility/urls.dart';
+import '../../ui_widgets/body_background.dart';
+import '../../ui_widgets/snack_message.dart';
 import 'forgot_password_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -59,6 +59,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         if (value?.trim().isEmpty ?? true) {
                           return "Enter your valid email!";
                         }
+                        const pattern =
+                            r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
+                            r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
+                            r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
+                            r'[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4]'
+                            r'[0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9]'
+                            r'[0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\'
+                            r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
+
+                        final regex = RegExp(pattern);
+                        if (value!.isNotEmpty && !regex.hasMatch(value)) {
+                          return "Enter email like tm@email.com";
+                        }
+
                         return null;
                       },
                       decoration: const InputDecoration(
@@ -219,14 +233,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
           _signUpInProgress = true;
         });
       }
-      final NetworkResponse response =
-          await NetworkCaller().postRequest(Urls.registration, body: {
-        "firstName": _firstNameTEController.text.trim(),
-        "lastName": _lastNameTEController.text.trim(),
-        "email": _emailTEController.text.trim(),
-        "mobile": _mobileTEController.text.trim(),
-        "password": _passwordTEController.text,
-      });
+      final NetworkResponse response = await NetworkCaller().postRequest(
+        Urls.registration,
+        body: {
+          "firstName": _firstNameTEController.text.trim(),
+          "lastName": _lastNameTEController.text.trim(),
+          "email": _emailTEController.text.trim(),
+          "mobile": _mobileTEController.text.trim(),
+          "password": _passwordTEController.text,
+        },
+      );
 
       if (mounted) {
         setState(() {

@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../ui_widgets/body_background.dart';
-import '../ui_widgets/profile_summary_card.dart';
+import '../../ui_widgets/body_background.dart';
+import '../../ui_widgets/profile_summary_card.dart';
 import 'forgot_password_screen.dart';
 import 'login_screen.dart';
 
@@ -19,11 +19,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      body: BodyBackground(
-        child: Column(
-          children: [
-            const ProfileSummaryCard(enableOnLongTab: false,),
-            Expanded(
+      body: Column(
+        children: [
+          const ProfileSummaryCard(enableOnLongTab: false,),
+          Expanded(
+            child: BodyBackground(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: SingleChildScrollView(
@@ -143,8 +143,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     ));
   }

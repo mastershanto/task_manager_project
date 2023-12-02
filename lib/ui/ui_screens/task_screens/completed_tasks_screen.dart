@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 
-import '../ui_widgets/profile_summary_card.dart';
-import '../ui_widgets/summary_card.dart';
-import '../ui_widgets/task_item_card.dart';
+import '../../ui_widgets/profile_summary_card.dart';
+import '../../ui_widgets/summary_card.dart';
+import '../../ui_widgets/task_item_card.dart';
 
 
 class CompletedTaskScreen extends StatefulWidget {
@@ -53,7 +53,7 @@ class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
                   child: ListView.builder(
                     itemCount: 50,
                     itemBuilder: (context, index) {
-                      return const TaskItemCard();
+                      // return const TaskItemCard();
                     },
                   )),
             ],

@@ -6,7 +6,7 @@ class SummaryCard extends StatelessWidget {
   const SummaryCard({
     super.key,required this.count,required this.title
   });
-  final int count;
+  final  count;
   final String title;
 
   @override
@@ -16,7 +16,7 @@ class SummaryCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16.0,horizontal: 32),
         child: Column(
           children: [
-            Text("$count",style:Theme.of(context).textTheme.titleLarge),
+            Text(count.toString(),style:Theme.of(context).textTheme.titleLarge),
             Text(title),
           ],
         ),

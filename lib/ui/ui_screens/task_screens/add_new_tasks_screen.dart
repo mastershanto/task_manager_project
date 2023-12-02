@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:task_manager_project/data/network_caller/network_response.dart';
 import 'package:task_manager_project/ui/ui_widgets/snack_message.dart';
 
-import '../../data/network_caller/network_caller.dart';
-import '../../data/utility/urls.dart';
-import '../ui_widgets/body_background.dart';
-import '../ui_widgets/profile_summary_card.dart';
+import '../../../data/network_caller/network_caller.dart';
+import '../../../data/utility/urls.dart';
+import '../../ui_widgets/body_background.dart';
+import '../../ui_widgets/profile_summary_card.dart';
 
 // import 'forgot_password_screen.dart';
 
@@ -24,21 +24,21 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool _createTaskInProgress = false;
+  bool _createNewTaskInProgress = false;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      body: BodyBackground(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const ProfileSummaryCard(
-                enableOnLongTab: false,
-              ),
-              Expanded(
+      body: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            const ProfileSummaryCard(
+              enableOnLongTab: false,
+            ),
+            Expanded(
+              child: BodyBackground(
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   child: SingleChildScrollView(
@@ -92,7 +92,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
                           ///todo: How to show post Request headers time limit
                             width: double.infinity,
                             child: Visibility(
-                              visible: _createTaskInProgress == false,
+                              visible: _createNewTaskInProgress == false,
                               replacement: const Center(
                                 child: CircularProgressIndicator(),
                               ),
@@ -111,17 +111,21 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     ));
   }
 
   Future<void> createTask() async {
-    if (_formKey.currentState!.validate()) {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
       if (mounted) {
-        _createTaskInProgress = true;
+        setState(() {
+          _createNewTaskInProgress = true;
+        });
       }
       final NetworkResponse response =
           await NetworkCaller().postRequest(Urls.createNewTask, body: {
@@ -131,7 +135,9 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
       });
 
       if (mounted) {
-        _createTaskInProgress = false;
+        setState(() {
+          _createNewTaskInProgress = false;
+        });
       }
 
       if (response.isSuccess) {
@@ -147,7 +153,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
               isError: true);
         }
       }
-    }
+
   }
 
   void _clearTextFields() {

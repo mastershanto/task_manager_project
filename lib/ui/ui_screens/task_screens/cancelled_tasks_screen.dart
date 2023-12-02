@@ -1,20 +1,21 @@
 //Todo: http and Dio used for connecting project with API Internet
 
 import 'package:flutter/material.dart';
+// import 'package:flutter_practice_project/code_of_full_course/13.0_liveClass(1,2,3)_taskManagerApp_part-2_m13/ui/ui_widgets/body_background.dart';
 
-import '../ui_widgets/profile_summary_card.dart';
-import '../ui_widgets/summary_card.dart';
-import '../ui_widgets/task_item_card.dart';
+import '../../ui_widgets/profile_summary_card.dart';
+import '../../ui_widgets/summary_card.dart';
 
 
-class ProgressTasksScreen extends StatefulWidget {
-  const ProgressTasksScreen({super.key});
+
+class CancelledTasksScreen extends StatefulWidget {
+  const CancelledTasksScreen({super.key});
 
   @override
-  State<ProgressTasksScreen> createState() => _ProgressTasksScreenState();
+  State<CancelledTasksScreen> createState() => _CancelledTasksScreenState();
 }
 
-class _ProgressTasksScreenState extends State<ProgressTasksScreen> {
+class _CancelledTasksScreenState extends State<CancelledTasksScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -53,7 +54,7 @@ class _ProgressTasksScreenState extends State<ProgressTasksScreen> {
                   child: ListView.builder(
                     itemCount: 50,
                     itemBuilder: (context, index) {
-                      return const TaskItemCard();
+                      // return const TaskItemCard();
                     },
                   )),
             ],

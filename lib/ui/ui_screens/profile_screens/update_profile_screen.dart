@@ -1,6 +1,7 @@
 //Todo: http and Dio used for connecting project with API Internet
 
 import 'package:flutter/material.dart';
+import 'package:task_manager_project/ui/controllers/auth_controller.dart';
 
 import '../../ui_widgets/body_background.dart';
 import '../../ui_widgets/profile_summary_card.dart';
@@ -15,6 +16,22 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
+   final TextEditingController _emailTEController=TextEditingController();
+   final TextEditingController _firstNameTEController=TextEditingController();
+   final TextEditingController _lastNameTEController=TextEditingController();
+   final TextEditingController _mobileTEController=TextEditingController();
+   // final TextEditingController _passwordTEController=TextEditingController();
+
+  @override
+  void initState() {
+    _emailTEController.text=AuthController.user?.email??"";
+    _firstNameTEController.text=AuthController.user?.firstName??"";
+    _lastNameTEController.text=AuthController.user?.lastName??"";
+    _mobileTEController.text=AuthController.user?.mobile??"";
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -45,6 +62,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         height: 16,
                       ),
                       TextFormField(
+                        controller: _emailTEController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
                           hintText: "Email",
@@ -54,6 +72,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         height: 16,
                       ),
                       TextFormField(
+                        controller: _firstNameTEController,
                         keyboardType: TextInputType.text,
                         obscureText: false,
                         decoration: const InputDecoration(
@@ -64,6 +83,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         height: 16,
                       ),
                       TextFormField(
+                        controller: _lastNameTEController,
                         keyboardType: TextInputType.text,
                         obscureText: false,
                         decoration: const InputDecoration(
@@ -74,6 +94,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         height: 16,
                       ),
                       TextFormField(
+                        controller: _mobileTEController,
                         keyboardType: TextInputType.phone,
                         obscureText: false,
                         decoration: const InputDecoration(
@@ -86,7 +107,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       TextFormField(
                         obscureText: true,
                         decoration: const InputDecoration(
-                          hintText: "Password",
+                          hintText: "Password (Optional)",
                         ),
                       ),
                       const SizedBox(

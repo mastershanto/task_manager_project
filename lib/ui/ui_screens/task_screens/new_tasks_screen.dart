@@ -54,6 +54,7 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
     if (mounted) {
       setState(() {
         getNewTaskInProgress = true;
+        getTaskCountSummaryList();
       });
     }
 
@@ -128,24 +129,27 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
                     false)*/
             ,
             replacement: const LinearProgressIndicator(),
-            child: SizedBox(
-              height: 120,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: taskCountSummaryListModel.taskCountList?.length ?? 0,
-                itemBuilder: (context, index) {
-                  TaskCount? taskCount =
-                      taskCountSummaryListModel.taskCountList![index];
-                  //todo: Fetch inProgress data,
-                  //todo: Fetch completed data,
-                  //todo: Fetch cancel Data
-                  return FittedBox(
-                    child: SummaryCard(
-                      count: taskCount.sum,
-                      title: taskCount.sId ?? "",
-                    ),
-                  );
-                },
+            child: RefreshIndicator(
+              onRefresh: getNewTaskList,
+              child: SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: taskCountSummaryListModel.taskCountList?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    TaskCount? taskCount =
+                        taskCountSummaryListModel.taskCountList![index];
+                    //todo: Fetch inProgress data,
+                    //todo: Fetch completed data,
+                    //todo: Fetch cancel Data
+                    return FittedBox(
+                      child: SummaryCard(
+                        count: taskCount.sum,
+                        title: taskCount.sId ?? "",
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -161,6 +165,16 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
                 itemBuilder: (context, index) {
                   return TaskItemCard(
                     task: taskListModel.taskList![index],
+                    onStatusChange: (){
+                      getNewTaskList();
+                    },
+                    showProgress: (inProgress){
+                      getNewTaskInProgress=inProgress;
+                      if(mounted){
+                        setState(() {
+                        });
+                      }
+                    },
                   );
                 },
               ),

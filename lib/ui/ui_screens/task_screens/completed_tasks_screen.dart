@@ -2,62 +2,100 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../data/models/task.dart';
+import '../../../data/models/task_list_model.dart';
+import '../../../data/network_caller/network_caller.dart';
+import '../../../data/network_caller/network_response.dart';
+import '../../../data/utility/urls.dart';
 import '../../ui_widgets/profile_summary_card.dart';
 import '../../ui_widgets/summary_card.dart';
 import '../../ui_widgets/task_item_card.dart';
 
+class CompletedTasksScreen extends StatefulWidget {
+  const CompletedTasksScreen({
+    super.key,
+    /*required this.task*/
+  });
 
-class CompletedTaskScreen extends StatefulWidget {
-  const CompletedTaskScreen({super.key});
-
+  // final Task task;
   @override
-  State<CompletedTaskScreen> createState() => _CompletedTaskScreenState();
+  State<CompletedTasksScreen> createState() => _CompletedTasksScreenState();
 }
 
-class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
+class _CompletedTasksScreenState extends State<CompletedTasksScreen> {
+
+  bool getCompletedTaskInProgress = false;
+
+  TaskListModel taskListModel=TaskListModel();
+
+  Future<void> getCompletedTaskList() async {
+    if (mounted) {
+      setState(() {
+        getCompletedTaskInProgress = true;
+      });
+    }
+
+    final NetworkResponse response =
+    await NetworkCaller().getRequest(Urls.getCompletedTasks);
+
+    if (response.isSuccess) {
+      taskListModel = TaskListModel.fromJson(response.jsonResponse);
+    }
+
+    if (mounted) {
+      setState(() {
+        getCompletedTaskInProgress = false;
+      });
+    }
+  }
+
+
+  @override
+  void initState() {
+    getCompletedTaskList();
+
+    super.initState();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-          body: Column(
-            children: [
-              const ProfileSummaryCard(),
-              const SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 16,right: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SummaryCard(
-                        count: 39,
-                        title: "New",
-                      ),
-                      SummaryCard(
-                        count: 39,
-                        title: "In Progress",
-                      ),
-                      SummaryCard(
-                        count: 39,
-                        title: "Completed",
-                      ),
-                      SummaryCard(
-                        count: 39,
-                        title: "Cancelled",
-                      ),
-                    ],
+      child: Scaffold(
+        body: Column(
+          children: [
+            const ProfileSummaryCard(),
+            Expanded(
+              child: Visibility(
+                visible: getCompletedTaskInProgress == false,
+                replacement: const Center(child: CircularProgressIndicator()),
+                child: RefreshIndicator(
+                  onRefresh: getCompletedTaskList,
+                  child: ListView.builder(
+                    itemCount: taskListModel.taskList?.length ?? 5,
+                    itemBuilder: (context, index) {
+                      return TaskItemCard(
+                        task: taskListModel.taskList![index],
+                        onStatusChange: (){
+                          getCompletedTaskList();
+                        },
+                        showProgress: (inProgress){
+                          getCompletedTaskInProgress=inProgress;
+                          if(mounted){
+                            setState(() {
+                            });
+                          }
+                        },
+                      );
+                    },
                   ),
                 ),
               ),
-              Expanded(
-                  child: ListView.builder(
-                    itemCount: 50,
-                    itemBuilder: (context, index) {
-                      // return const TaskItemCard();
-                    },
-                  )),
-            ],
-          ),
-        ));
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+// import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_manager_project/data/models/user_model.dart';
 
 class AuthController{
   static  String? token;
   static UserModel? user;
+  // static ValueNotifier<UserModel> user;
 
 
   static Future <void> saveUserInformation(String t, UserModel model)async {
@@ -13,6 +15,12 @@ class AuthController{
     await prefs.setString("token", t);
     await prefs.setString("user", jsonEncode(model.toJson())); //jsonEncode used as against use of .toString()
     token=t;
+    user=model;
+  }
+
+  static Future <void> updateUserInformation(UserModel model)async {
+    SharedPreferences prefs= await SharedPreferences.getInstance();
+    await prefs.setString("user", jsonEncode(model.toJson())); //jsonEncode used as against use of .toString()
     user=model;
   }
 

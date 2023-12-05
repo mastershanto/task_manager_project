@@ -36,7 +36,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
         child: Column(
           children: [
             const ProfileSummaryCard(
-              enableOnLongTab: false,
+              enableOnTab: false,
             ),
             Expanded(
               child: BodyBackground(

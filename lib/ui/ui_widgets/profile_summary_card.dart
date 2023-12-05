@@ -1,5 +1,6 @@
 
-
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
@@ -8,21 +9,18 @@ import '../ui_screens/profile_screens/login_screen.dart';
 import '../ui_screens/profile_screens/update_profile_screen.dart';
 
 ///todo: Make the ProfileSummaryCard as Stateful Widget
-class ProfileSummaryCard extends StatefulWidget {
-   const ProfileSummaryCard({super.key, this.enableOnLongTab = true});
+class ProfileSummaryCard extends StatelessWidget {
+  const ProfileSummaryCard({super.key, this.enableOnTab = true});
 
-   final bool enableOnLongTab;
+  final bool enableOnTab;
 
-  @override
-  State<ProfileSummaryCard> createState() => _ProfileSummaryCardState();
-}
-
-class _ProfileSummaryCardState extends State<ProfileSummaryCard> {
   @override
   Widget build(BuildContext context) {
+    Uint8List imageBytes = const Base64Decoder().convert(AuthController.user?.photo??"");
+
     return ListTile(
-        onLongPress: () {
-          if (widget.enableOnLongTab == true) {
+        onTap: () {
+          if (enableOnTab == true) {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -32,14 +30,18 @@ class _ProfileSummaryCardState extends State<ProfileSummaryCard> {
           }
         },
         tileColor: Colors.green,
-        leading: const CircleAvatar(
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(Icons.person),
-          ),
+        leading: CircleAvatar(
+
+          child: AuthController.user?.photo == null
+              ? const Icon(Icons.person)
+              : ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: Image.memory(imageBytes)),
         ),
-        title: Text(fullName,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        title: Text(
+          fullName,
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
         subtitle: Text(AuthController.user?.email ?? "",
             style: const TextStyle(color: Colors.white)),
@@ -57,8 +59,7 @@ class _ProfileSummaryCardState extends State<ProfileSummaryCard> {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    (route) => false);
-
+                (route) => false);
           },
           icon: const Icon(
             // Icons.more_vert,
@@ -70,61 +71,7 @@ class _ProfileSummaryCardState extends State<ProfileSummaryCard> {
   }
 
   // SimpleDialog logoutAndEditDialogBar(context) {
-  //   return SimpleDialog(
-  //     title: const Text('Options'),
-  //     children: <Widget>[
-  //       const SizedBox(
-  //         height: 16,
-  //       ),
-  //       ListTile(
-  //         onTap: () {
-  //             Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                   builder: (context) => const UpdateProfileScreen(),
-  //                 )
-  //             );
-  //
-  //         },
-  //         leading: const Icon(Icons.edit),
-  //         title: const Text(
-  //           "Update Profile",
-  //           style: TextStyle(color: Colors.green),
-  //         ),
-  //       ),
-  //       const SizedBox(
-  //         height: 8,
-  //       ),
-  //       ListTile(
-  //         onTap: () {
-  //           AuthController.clearAuthData();
-  //
-  //             Navigator.pushAndRemoveUntil(
-  //                 context,
-  //                 MaterialPageRoute(builder: (context) => const LoginScreen()),
-  //                 (route) => false);
-  //
-  //         },
-  //         leading: const Icon(Icons.logout),
-  //         title: const Text(
-  //           "Logout",
-  //           style: TextStyle(color: Colors.blue),
-  //         ),
-  //       ),
-  //       ListTile(
-  //         onTap: () {
-  //           Navigator.of(context).pop();
-  //         },
-  //         trailing: const Text(
-  //           "Close",
-  //           style: TextStyle(color: Colors.red),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  String get fullName{
-    return "${AuthController.user?.firstName??""} ${AuthController.user?.lastName ??""}";
+  String get fullName {
+    return "${AuthController.user?.firstName ?? ""} ${AuthController.user?.lastName ?? ""}";
   }
 }

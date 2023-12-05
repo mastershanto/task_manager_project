@@ -76,12 +76,6 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
                   },
                   appContext: context,
                 ),
-                TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    hintText: "Enter six digit pin",
-                  ),
-                ),
                 const SizedBox(
                   height: 16,
                 ),

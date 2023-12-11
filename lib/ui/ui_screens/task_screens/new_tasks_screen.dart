@@ -92,7 +92,7 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
         },
         child: const Icon(Icons.add),
       ),
-      body: Column(
+      body:Column(
         children: [
           const ProfileSummaryCard(),
           // const SingleChildScrollView(

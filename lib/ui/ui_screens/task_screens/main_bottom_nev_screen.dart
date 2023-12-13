@@ -30,25 +30,25 @@ class _MainBottomNevScreenState extends State<MainBottomNevScreen> {
     return SafeArea(
         child: Scaffold(
           body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index){
-          setState(() {
-            _selectedIndex=index;
-          });
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: (index){
+              setState(() {
+                _selectedIndex=index;
+              });
 
-        },
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels:true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.abc),label: "New"),
-          BottomNavigationBarItem(icon: Icon(Icons.change_circle_outlined),label: "In Progress"),
-          BottomNavigationBarItem(icon: Icon(Icons.done),label: "Completed"),
-          BottomNavigationBarItem(icon: Icon(Icons.close),label: "Canceled"),
+            },
+            selectedItemColor: Colors.green,
+            unselectedItemColor: Colors.grey,
+            showUnselectedLabels:true,
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.abc),label: "New"),
+              BottomNavigationBarItem(icon: Icon(Icons.change_circle_outlined),label: "In Progress"),
+              BottomNavigationBarItem(icon: Icon(Icons.done),label: "Completed"),
+              BottomNavigationBarItem(icon: Icon(Icons.close),label: "Canceled"),
 
-        ],
-      ),
-    ));
+            ],
+          ),
+        ));
   }
 }

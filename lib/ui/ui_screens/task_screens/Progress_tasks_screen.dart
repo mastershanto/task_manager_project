@@ -5,14 +5,11 @@
 //  todo: d. update after adding new task at same time
 
 import 'package:flutter/material.dart';
-
-import '../../../data/models/task.dart';
-import '../../../data/models/task_list_model.dart';
+import '../../../data/models/task_list_status_count_model.dart';
 import '../../../data/network_caller/network_caller.dart';
 import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
 import '../../ui_widgets/profile_summary_card.dart';
-import '../../ui_widgets/summary_card.dart';
 import '../../ui_widgets/task_item_card.dart';
 
 class ProgressTasksScreen extends StatefulWidget {

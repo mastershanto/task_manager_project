@@ -1,17 +1,17 @@
-import 'task.dart';
+import 'task_count.dart';
 
-class TaskListModel {
+class TaskCountSummaryListModel {
   String? status;
-  List<Task>? taskList;
+  List<TaskCount>? taskCountList;
 
-  TaskListModel({this.status, this.taskList});
+  TaskCountSummaryListModel({this.status, this.taskCountList});
 
-  TaskListModel.fromJson(Map<String, dynamic> json) {
+  TaskCountSummaryListModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     if (json['data'] != null) {
-      taskList = <Task>[];
+      taskCountList = <TaskCount>[];
       json['data'].forEach((v) {
-        taskList!.add(Task.fromJson(v));
+        taskCountList!.add(TaskCount.fromJson(v));
       });
     }
   }
@@ -19,11 +19,9 @@ class TaskListModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
-    if (taskList != null) {
-      data['data'] = taskList!.map((v) => v.toJson()).toList();
+    if (taskCountList != null) {
+      data['data'] = taskCountList!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
-
-

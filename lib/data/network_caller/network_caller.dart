@@ -15,9 +15,9 @@ class NetworkCaller {
       log(url);
       log(body.toString());
       final Response response =
-          await post(Uri.parse(url), body: jsonEncode(body), headers: {
+      await post(Uri.parse(url), body: jsonEncode(body), headers: {
         "content-type": "application/json",
-            "token":AuthController.token.toString()
+        "token":AuthController.token.toString()
       });
 
       log(response.headers.toString());
@@ -35,11 +35,11 @@ class NetworkCaller {
           backToLogin();
         }
 
-          return NetworkResponse(
-            isSuccess: false,
-            statusCode: response.statusCode,
-            jsonResponse: jsonDecode(response.body),
-          );
+        return NetworkResponse(
+          isSuccess: false,
+          statusCode: response.statusCode,
+          jsonResponse: jsonDecode(response.body),
+        );
       } else {
         log("Succeed Failed");
         return NetworkResponse(
@@ -76,7 +76,7 @@ class NetworkCaller {
         );
       } else if(response.statusCode==401){
 
-          backToLogin();
+        backToLogin();
         return NetworkResponse(
           isSuccess: false,
           statusCode: response.statusCode,
@@ -99,8 +99,8 @@ class NetworkCaller {
 void backToLogin(){
   AuthController.clearAuthData();
   Navigator.pushAndRemoveUntil(
-  TaskManagerApp.navigationKey.currentContext!, MaterialPageRoute(builder: (context){
-return   const LoginScreen();
+      TaskManagerApp.navigatorKey.currentContext!, MaterialPageRoute(builder: (context){
+    return   const LoginScreen();
   }),(rout)=> false
   );
 }

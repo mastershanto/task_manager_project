@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:task_manager_project/ui/widgets/snack_message.dart';
+
 
 import '../../../data/models/user_model.dart';
 import '../../../data/network_caller/network_caller.dart';
@@ -10,7 +10,8 @@ import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
 import '../../../style/style.dart';
 import '../../controllers/authentication_controller.dart';
-import '../../controllers/input_validations.dart';
+import '../../controllers/form_validation.dart';
+import '../../ui_widgets/snack_message.dart';
 import '../../widgets/background.dart';
 import '../../widgets/profile_summary_card.dart';
 
@@ -168,7 +169,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                               child: ElevatedButton(
                                 onPressed: updateProfile,
                                 child: const Icon(
-                                    Icons.arrow_circle_right_outlined),
+                                    Icons.arrow_circle_right_outlined,color:Colors.white),
                               ),
                             ),
                           ),
@@ -223,11 +224,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           photo: imageInBase64 ?? AuthenticationController.user?.photo,
         ));
         if (mounted) {
-          showSnackMessage(context, "Profile Updated Successfully!");
+          showSnackMessage(context, "Profile updated successfully!",true);
         }
       } else {
         if (mounted) {
-          showSnackMessage(context, "Action Failed! Please Try Again.", true);
+          showSnackMessage(context, "Action Failed! Please, try again.", false);
         }
       }
     }

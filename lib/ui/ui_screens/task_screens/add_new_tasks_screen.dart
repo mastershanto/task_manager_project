@@ -4,7 +4,7 @@ import '../../../data/network_caller/network_caller.dart';
 import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
 import '../../../style/style.dart';
-import '../../controllers/input_validations.dart';
+import '../../controllers/form_validation.dart';
 import '../../widgets/background.dart';
 import '../../widgets/profile_summary_card.dart';
 import '../../widgets/snack_message.dart';

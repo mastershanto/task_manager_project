@@ -47,12 +47,14 @@ class ProfileSummaryCard extends StatelessWidget {
             style: const TextStyle(color: Colors.white)),
         trailing: IconButton(
           onPressed: () {
+
             // showDialog<void>(
             //   context: context,
             //   builder: (BuildContext context) {
             //     return logoutAndEditDialogBar(context);
             //   },
             // );
+
 
             AuthController.clearAuthData();
 
@@ -61,10 +63,12 @@ class ProfileSummaryCard extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
                 (route) => false);
           },
+
           icon: const Icon(
             // Icons.more_vert,
             Icons.logout,
             size: 35,
+            color: Colors.white,
           ),
 // - icon: const Icon(Icons.logout),),
         ));

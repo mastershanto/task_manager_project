@@ -19,17 +19,17 @@ class FormValidation {
 
   static String? inputValidation(String? value) {
     if (value?.trim().isEmpty ?? true) {
-      return "Please fill-up the input field.";
+      return "Please, enter the valid inputs.";
     }
     return null;
   }
 
   static String? phoneNumberValidation(String? value) {
     if (value?.trim().isEmpty ?? true) {
-      return "Please fill-up the input field.";
+      return "Please, enter the valid inputs.";
     }
     if (value!.length > 11) {
-      return "Your phone number cannot exceed 11 digit";
+      return "Phone number must have 11 digit";
     }
 
     return null;

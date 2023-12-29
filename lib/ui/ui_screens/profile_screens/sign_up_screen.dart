@@ -5,7 +5,7 @@ import '../../../data/network_caller/network_caller.dart';
 import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
 import '../../../style/style.dart';
-import '../../controllers/input_validations.dart';
+import '../../controllers/form_validation.dart';
 import '../../widgets/background.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -166,9 +166,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         if (response.isSuccess) {
           _clearInputText();
+          Navigator.pop(context);
           showSnackMessage(
             context,
-            "Account Created Successfully! Please login in",
+            "Account Created Successfully! Please, login",
           );
         }
       } else {

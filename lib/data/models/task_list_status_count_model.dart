@@ -1,12 +1,13 @@
+
 import 'task_count.dart';
 
-class TaskCountSummaryListModel {
+class TaskListStatusCountModel {
   String? status;
   List<TaskCount>? taskCountList;
 
-  TaskCountSummaryListModel({this.status, this.taskCountList});
+  TaskListStatusCountModel({this.status, this.taskCountList});
 
-  TaskCountSummaryListModel.fromJson(Map<String, dynamic> json) {
+  TaskListStatusCountModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     if (json['data'] != null) {
       taskCountList = <TaskCount>[];
@@ -25,5 +26,3 @@ class TaskCountSummaryListModel {
     return data;
   }
 }
-
-

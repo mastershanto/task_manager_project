@@ -1,18 +1,18 @@
-//Todo: http and Dio used for connecting project with API Internet
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:task_manager_project/ui/ui_widgets/snack_message.dart';
+import 'package:task_manager_project/ui/widgets/snack_message.dart';
 
 import '../../../data/models/user_model.dart';
 import '../../../data/network_caller/network_caller.dart';
 import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
-import '../../controllers/auth_controller.dart';
-import '../../ui_widgets/body_background.dart';
-import '../../ui_widgets/profile_summary_card.dart';
+import '../../../style/style.dart';
+import '../../controllers/authentication_controller.dart';
+import '../../controllers/input_validations.dart';
+import '../../widgets/background.dart';
+import '../../widgets/profile_summary_card.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
   const UpdateProfileScreen({super.key});
@@ -22,176 +22,158 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _firstNameTEController = TextEditingController();
-  final TextEditingController _lastNameTEController = TextEditingController();
-  final TextEditingController _mobileTEController = TextEditingController();
-  final TextEditingController _passwordTEController = TextEditingController();
+  final TextEditingController _emailInputTEController = TextEditingController();
+  final TextEditingController _firstNameInputTEController =
+  TextEditingController();
+  final TextEditingController _lastNameInputTEController =
+  TextEditingController();
+  final TextEditingController _mobileInputTEController =
+  TextEditingController();
+  final TextEditingController _passwordInputTEController =
+  TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool updateProfileInProgress = false;
-
   XFile? photo;
 
   @override
   void initState() {
     super.initState();
-    _emailTEController.text = AuthController.user?.email ?? "";
-    _firstNameTEController.text = AuthController.user?.firstName ?? "";
-    _lastNameTEController.text = AuthController.user?.lastName ?? "";
-    _mobileTEController.text = AuthController.user?.mobile ?? "";
+    _emailInputTEController.text = AuthenticationController.user?.email ?? '';
+    _firstNameInputTEController.text = AuthenticationController.user?.firstName ?? '';
+    _lastNameInputTEController.text = AuthenticationController.user?.lastName ?? '';
+    _mobileInputTEController.text = AuthenticationController.user?.mobile ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      body: Form(
-        key: _formKey,
+    return Scaffold(
+      body: SafeArea(
         child: Column(
           children: [
-            const ProfileSummaryCard(
-              enableOnTab: false,
-            ),
+            const ProfileSummeryCard(onTapStatus: false),
             Expanded(
-              child: BodyBackground(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 80,
-                        ),
-                        Text(
-                          "Update Profile",
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        photoPickerField(context),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        TextFormField(
-                          controller: _emailTEController,
-                          validator: (String? value) {
-                            if (value?.trim().isEmpty ?? true) {
-                              return "Enter your valid email!";
-                            }
-                            const pattern =
-                                r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
-                                r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
-                                r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
-                                r'[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4]'
-                                r'[0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9]'
-                                r'[0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\'
-                                r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
-
-                            final regex = RegExp(pattern);
-                            if (value!.isNotEmpty && !regex.hasMatch(value)) {
-                              return "Enter email like tm@email.com";
-                            }
-
-                            return null;
-                          },
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            hintText: "Email",
+              child: Background(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 30),
+                          const Text("Update Profile"),
+                          const SizedBox(height: 8),
+                          InkWell(
+                            onTap: () {
+                              showPhotoPickerBottomModal();
+                            },
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.black54,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(8),
+                                          bottomLeft: Radius.circular(8),
+                                        ),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Center(
+                                        child: Text(
+                                          "Photo",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Visibility(
+                                      visible: photo == null,
+                                      replacement: Text(
+                                        photo?.name ?? '',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
+                                      ),
+                                      child: Text(
+                                        "Choose a Image",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        TextFormField(
-                          controller: _firstNameTEController,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Enter your valid first name!";
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.text,
-                          obscureText: false,
-                          decoration: const InputDecoration(
-                            hintText: "First name ",
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _emailInputTEController,
+                            decoration:
+                            const InputDecoration(hintText: "Email"),
+                            validator: FormValidation.emailValidation,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        TextFormField(
-                          controller: _lastNameTEController,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Enter your valid last name!";
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.text,
-                          obscureText: false,
-                          decoration: const InputDecoration(
-                            hintText: "Last name",
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _firstNameInputTEController,
+                            decoration:
+                            const InputDecoration(hintText: "First Name"),
+                            validator: FormValidation.inputValidation,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        TextFormField(
-                          controller: _mobileTEController,
-                          validator: (String? value) {
-                            if (value?.trim().isEmpty ?? true) {
-                              return "Enter your mobile number!";
-                            }
-                            if (value!.length != 11) {
-                              return "Mobile number must be 11 digit.!";
-                            }
-                            if (int.tryParse(value) == null) {
-                              return "Mobile number must be numeric(a-z or A-Z).!";
-                            }
-
-                            return null;
-                          },
-                          keyboardType: TextInputType.phone,
-                          obscureText: false,
-                          decoration: const InputDecoration(
-                            hintText: "Mobile",
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _lastNameInputTEController,
+                            decoration:
+                            const InputDecoration(hintText: "Last Name"),
+                            validator: FormValidation.inputValidation,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        TextFormField(
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            hintText: "Password (Optional)",
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _mobileInputTEController,
+                            decoration: const InputDecoration(
+                                hintText: "Mobile Number"),
+                            validator: FormValidation.phoneNumberValidation,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        SizedBox(
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _passwordInputTEController,
+                            decoration: const InputDecoration(
+                                hintText: "Password (optional)"),
+                          ),
+                          const SizedBox(height: 8),
+                          SizedBox(
                             width: double.infinity,
                             child: Visibility(
                               visible: updateProfileInProgress == false,
-                              replacement: const Center(
-                                child: CircularProgressIndicator(),
+                              replacement: Center(
+                                child: CircularProgressIndicator(
+                                  color: PrimaryColor.color,
+                                ),
                               ),
                               child: ElevatedButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      updateProfile();
-                                    }
-                                  },
-                                  child: const Icon(
-                                      Icons.arrow_circle_right_outlined)),
-                            )),
-                        const SizedBox(
-                          height: 48,
-                        ),
-                      ],
+                                onPressed: updateProfile,
+                                child: const Icon(
+                                    Icons.arrow_circle_right_outlined),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -200,222 +182,136 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           ],
         ),
       ),
-    ));
-  }
-
-/*  Future<void> updateProfile() async {
-    if (mounted) {
-      setState(() {
-        updateProfileInProgress = true;
-      });
-    }
-
-    String photoInBase64;
-
-    Map<String, dynamic> inputDate = {
-      "firstName": _firstNameTEController.text.trim(),
-      "lastName": _lastNameTEController.text.trim(),
-      "email": _emailTEController.text.trim(),
-      "mobile": _mobileTEController.text.trim(),
-    };
-
-
-
-    if (_passwordTEController.text.isNotEmpty) {
-      inputDate["password"] = _passwordTEController.text;
-    }
-
-    if(photo !=null){
-      List<int> imageByte=await photo!.readAsBytes();
-
-      photoInBase64= base64Encode(imageByte);
-
-      inputDate["photo"]=photoInBase64;
-    }
-
-    final NetworkResponse response = await NetworkCaller().postRequest(
-      Urls.updateProfile,
-      body: inputDate,
     );
-
-    if (mounted) {
-      setState(() {
-        updateProfileInProgress = false;
-      });
-    }
-
-    if (response.isSuccess) {
-      AuthController.updateUserInformation(UserModel(
-        email: _emailTEController.text.trim(),
-        firstName: _firstNameTEController.text.trim(),
-        lastName: _lastNameTEController.text.trim(),
-        mobile: _mobileTEController.text.trim(),
-      ));
-
-      if (mounted) {
-        showSnackMessage(context, "Profile updating successfully!");
-      }
-    } else {
-      if (mounted) {
-        showSnackMessage(context, "Profile updating failed! try again.",
-            isError: true);
-      }
-    }
   }
-
-  Container photoPickerField(BuildContext context) {
-    return Container(
-      height: 50,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              alignment: Alignment.center,
-              height: 50,
-              decoration: const BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    bottomLeft: Radius.circular(8)),
-              ),
-              child: Text(
-                "Image",
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: InkWell(
-              onTap: () async {
-                final XFile? image =
-                    await ImagePicker().pickImage(source: ImageSource.camera,imageQuality: 50);
-                if (image != null) {
-                  if(mounted){
-                    setState(() {
-                      photo=image;
-                    });
-                  }
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                child: Visibility(
-                    visible: photo == null,
-                    replacement: Text(photo?.name ?? ""),
-                    child: const Text("Select a photo")),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }*/
 
   Future<void> updateProfile() async {
-    updateProfileInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    String? photoInBase64;
-    Map<String, dynamic> inputData = {
-      "firstName": _firstNameTEController.text.trim(),
-      "lastName" : _lastNameTEController.text.trim(),
-      "email" : _emailTEController.text.trim(),
-      "mobile": _mobileTEController.text.trim(),
-    };
+    String? imageInBase64;
 
-    if (_passwordTEController.text.isNotEmpty) {
-      inputData['password'] = _passwordTEController.text;
-    }
-
-    if (photo != null){
-      List<int> imageBytes = await photo!.readAsBytes();
-      photoInBase64 = base64Encode(imageBytes);
-      inputData['photo'] = photoInBase64;
-    }
-
-    final NetworkResponse response = await NetworkCaller().postRequest(
-      Urls.updateProfile,
-      body: inputData,
-    );
-    updateProfileInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      AuthController.updateUserInformation(UserModel(
-          email: _emailTEController.text.trim(),
-          firstName: _firstNameTEController.text.trim(),
-          lastName: _lastNameTEController.text.trim(),
-          mobile: _mobileTEController.text.trim(),
-          photo: photoInBase64 ?? AuthController.user?.photo
-      ));
+    if (_formKey.currentState!.validate()) {
+      updateProfileInProgress = true;
       if (mounted) {
-        showSnackMessage(context, 'Update profile success!');
+        setState(() {});
       }
-    } else {
+
+      Map<String, dynamic> inputData = {
+        "email": _emailInputTEController.text.trim(),
+        "firstName": _firstNameInputTEController.text.trim(),
+        "lastName": _lastNameInputTEController.text.trim(),
+        "mobile": _mobileInputTEController.text.trim(),
+      };
+      if (_passwordInputTEController.text.isNotEmpty) {
+        inputData["password"] = _passwordInputTEController.text;
+      }
+      if (photo != null) {
+        List<int> imageInBytes = await photo!.readAsBytes();
+        imageInBase64 = base64Encode(imageInBytes);
+        inputData["photo"] = imageInBase64;
+      }
+      final NetworkResponse response =
+      await NetworkCaller.postRequest(Urls.profileUpdate, body: inputData);
+      updateProfileInProgress = false;
       if (mounted) {
-        showSnackMessage(context, 'Update profile failed. Try again.');
+        setState(() {});
+      }
+      if (response.isSuccess) {
+        AuthenticationController.updateUserInformation(UserModel(
+          email: _emailInputTEController.text.trim(),
+          firstName: _firstNameInputTEController.text.trim(),
+          lastName: _lastNameInputTEController.text.trim(),
+          mobile: _mobileInputTEController.text.trim(),
+          photo: imageInBase64 ?? AuthenticationController.user?.photo,
+        ));
+        if (mounted) {
+          showSnackMessage(context, "Profile Updated Successfully!");
+        }
+      } else {
+        if (mounted) {
+          showSnackMessage(context, "Action Failed! Please Try Again.", true);
+        }
       }
     }
   }
 
-  Container photoPickerField(BuildContext context) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(8)),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              height: 50,
-              decoration: const BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    bottomLeft: Radius.circular(8),
-                  )),
-              alignment: Alignment.center,
-              child: const Text(
-                'Photo',
-                style: TextStyle(color: Colors.white),
+  void showPhotoPickerBottomModal() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 18.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () async {
+                      final XFile? image = await ImagePicker().pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 50,
+                      );
+                      if (image != null) {
+                        photo = image;
+                        if (mounted) {
+                          Navigator.pop(context);
+                          setState(() {});
+                        }
+                      }
+                    },
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.image,
+                          color: PrimaryColor.color,
+                          size: 34,
+                        ),
+                        const Text(
+                          "Gallery",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  TextButton(
+                    onPressed: () async {
+                      final XFile? image = await ImagePicker().pickImage(
+                        source: ImageSource.camera,
+                        imageQuality: 50,
+                      );
+                      if (image != null) {
+                        photo = image;
+                        if (mounted) {
+                          Navigator.pop(context);
+                          setState(() {});
+                        }
+                      }
+                    },
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.camera,
+                          color: PrimaryColor.color,
+                          size: 34,
+                        ),
+                        const Text(
+                          "Camera",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ),
+            ],
           ),
-          Expanded(
-            flex: 3,
-            child: InkWell(
-              onTap: () async {
-                final XFile? image = await ImagePicker()
-                    .pickImage(source: ImageSource.camera, imageQuality: 50);
-                if (image != null) {
-                  photo = image;
-                  if (mounted) {
-                    setState(() {});
-                  }
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.only(left: 16),
-                child: Visibility(
-                  visible: photo == null,
-                  replacement: Text(photo?.name ?? ''),
-                  child: const Text('Select a photo'),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
-
-
 }

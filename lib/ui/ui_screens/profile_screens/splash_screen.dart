@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:task_manager_project/ui/controllers/auth_controller.dart';
-import 'package:task_manager_project/ui/ui_screens/task_screens/main_bottom_nev_screen.dart';
-import '../../ui_widgets/body_background.dart';
+
+import '../../controllers/authentication_controller.dart';
+import '../../widgets/background.dart';
+import '../task_screens/main_bottom_nev_screen.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -13,39 +14,36 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  void splashScreenTimeOut() async {
+    bool isLoggedIn = await AuthenticationController.checkUserAuthState();
+
+    Future.delayed(const Duration(seconds: 2)).then(
+          (value) => Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+          isLoggedIn ? const MainBottomNavScreen() : const LoginScreen(),
+        ),
+            (route) => false,
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    goToLongin();
-  }
-
-  void goToLongin() async {
-    final isLoggedIn = await AuthController.checkAuthState();
-
-    //User fo direct SharedPreferences
-    /*SharedPreferences prefs= await SharedPreferences.getInstance();
-    String? token=prefs.getString("token");*/
-    Future.delayed(const Duration(seconds: 2)).then((value) {
-      Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (context) {
-        return isLoggedIn
-            ? const MainBottomNevScreen()
-            : const LoginScreen(); /*token==null? const LoginScreen():const MainBottomNevScreen()*/
-      }), (route) => false);
-    });
+    splashScreenTimeOut();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: BodyBackground(
-          child: Center(
-            child: /*Image.asset("assets/site.jpg"),*/
-                SvgPicture.asset(
-              "assets/logo.svg",
-              width: 120,
-            ),
+    return Scaffold(
+      body: Background(
+        showBottomCircularLoading: true,
+        child: Center(
+          child: SvgPicture.asset(
+            'assets/logo.svg',
+            width: 120,
           ),
         ),
       ),

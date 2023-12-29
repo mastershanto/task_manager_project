@@ -1,18 +1,16 @@
-//Todo: http and Dio used for connecting project with API Internet
-
-//todo: we have to use jtw.oi website for testing JWT token
-
 import 'package:flutter/material.dart';
-import 'package:task_manager_project/data/models/user_model.dart';
-import 'package:task_manager_project/ui/controllers/auth_controller.dart';
-import 'package:task_manager_project/ui/ui_screens/profile_screens/forgot_password_screen.dart';
-
+// import 'package:task_manager_project_with_getx/ui/controllers/authentication_controller.dart';
+import '../../../data/models/user_model.dart';
 import '../../../data/network_caller/network_caller.dart';
 import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
-import '../../ui_widgets/body_background.dart';
-import '../../ui_widgets/snack_message.dart';
+import '../../../style/style.dart';
+import '../../controllers/authentication_controller.dart';
+import '../../controllers/input_validations.dart';
+import '../../widgets/background.dart';
+import '../../widgets/snack_message.dart';
 import '../task_screens/main_bottom_nev_screen.dart';
+import 'forgot_password_screen.dart';
 import 'sign_up_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,154 +21,111 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _passwordTEController = TextEditingController();
+  final TextEditingController _emailInputTEController = TextEditingController();
+  final TextEditingController _passwordInputTEController =
+  TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool _loginInProgress = false;
+  bool loginInProgress = false;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: BodyBackground(
-          child: Container(
-            padding: const EdgeInsets.all(24),
+    return Scaffold(
+      body: Background(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 60,
+          ),
+          child: SafeArea(
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 80,
-                    ),
-                    Text(
-                      "Get start with",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 100),
+                    Text("Get Started With",
+                        style: Theme.of(context).textTheme.bodyLarge),
+                    const SizedBox(height: 16),
                     TextFormField(
-                      controller: _emailTEController,
-                      validator: (String? value) {
-                        if (value?.trim().isEmpty ?? true) {
-                          return "Enter your valid email!";
-                        }
-                        const pattern =
-                            r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
-                            r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
-                            r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
-                            r'[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4]'
-                            r'[0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9]'
-                            r'[0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\'
-                            r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
-
-                        final regex = RegExp(pattern);
-                        if (value!.isNotEmpty && !regex.hasMatch(value)) {
-                          return "Enter email like ostad@mail.com";
-                        }
-
-                        return null;
-                      },
+                      controller: _emailInputTEController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
                         hintText: "Email",
                       ),
+                      validator: FormValidation.emailValidation,
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 8),
                     TextFormField(
-                      controller: _passwordTEController,
-                      validator: (value) {
-                        if (value!.isEmpty /*?? true*/) {
-                          return "Enter you valid password!";
-                        }
-                        if (value.length < 6) {
-                          return "Enter password at least 6 letters!";
-                        }
-                        return null;
-                      },
+                      controller: _passwordInputTEController,
                       obscureText: true,
                       decoration: const InputDecoration(
                         hintText: "Password",
                       ),
+                      validator: FormValidation.inputValidation,
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 8),
                     SizedBox(
                       width: double.infinity,
                       child: Visibility(
-                        visible: _loginInProgress == false,
-                        replacement: const Center(
-                          child: CircularProgressIndicator(),
+                        visible: loginInProgress == false,
+                        replacement: Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Center(
+                              child: CircularProgressIndicator(
+                                color: PrimaryColor.color,
+                              )),
                         ),
                         child: ElevatedButton(
-                          onPressed: () {
-                            _login();
-                          },
-                          child: const Icon(Icons.arrow_circle_right_outlined),
-                        ),
+                            onPressed: _login,
+                            child:
+                            const Icon(Icons.arrow_circle_right_outlined,color: Colors.white,)),
                       ),
                     ),
-                    const SizedBox(
-                      height: 48,
-                    ),
+                    const SizedBox(height: 48),
                     Center(
-                        child: TextButton(
-                      onPressed: () {
-                        /*Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ForgotPasswordScreen(),
-                        ),
-                      );*/
-                      },
-                      child: GestureDetector(
-                        onTap: () {
+                      child: TextButton(
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  const ForgotPasswordScreen(),
+                              const ForgetPasswordScreen(),
                             ),
                           );
                         },
                         child: const Text(
-                          "Forgot Password?",
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600),
+                          "Forget Password ?",
+                          style: TextStyle(color: Colors.grey),
                         ),
                       ),
-                    )),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Don't have an account?",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16)),
+                        const Text(
+                          "Don't have account?",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 13),
+                        ),
                         TextButton(
                           onPressed: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SignUpScreen()));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignUpScreen(),
+                              ),
+                            );
                           },
-                          child: const Text(
-                            "Sign Up",
-                            style: TextStyle(fontSize: 16),
+                          child: Text(
+                            "Sign up",
+                            style: TextStyle(color: PrimaryColor.color),
                           ),
                         ),
                       ],
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -183,67 +138,57 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) {
-      return; //different type use of form validation
+      return;
     }
+    loginInProgress = true;
     if (mounted) {
-      setState(() {
-        _loginInProgress = true;
-      });
+      setState(() {});
     }
-    NetworkResponse response = await NetworkCaller().postRequest(Urls.login,
-        body: {
-          "email": _emailTEController.text.trim(),
-          "password": _passwordTEController.text,
-        },
-        isLogin: true);
 
+    final NetworkResponse response = await NetworkCaller.postRequest(
+      Urls.login,
+      body: {
+        "email": _emailInputTEController.text.trim(),
+        "password": _passwordInputTEController.text,
+      },
+      isLogin: true,
+    );
+
+    loginInProgress = false;
     if (mounted) {
-      setState(() {
-        _loginInProgress = false;
-      });
+      setState(() {});
     }
 
     if (response.isSuccess) {
-      await AuthController.saveUserInformation(response.jsonResponse["token"],
-          UserModel.fromJson(response.jsonResponse["data"]));
-
-      // Obtain shared preferences. Direct use of SharedPreferences
-      /*SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', response.jsonResponse["token"]);*/
-
-      _clearTextFields();
+      await AuthenticationController.saveUserInformation(
+        response.jsonResponse["token"],
+        UserModel.fromJson(response.jsonResponse['data']),
+      );
       if (mounted) {
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => const MainBottomNevScreen()));
-      }
-
-      if (mounted) {
-        showSnackMessage(context, "You logged in successfully!");
+              builder: (context) => const MainBottomNavScreen(),
+            ),
+                (route) => false);
       }
     } else {
-      if (mounted) {
-        if (response.statusCode == 401) {
-          showSnackMessage(context, "Please, check your email/password.",
-              isError: true);
-        } else {
-          showSnackMessage(context, "Login failed! try again.", isError: true);
+      if (response.statusCode == 401) {
+        if (mounted) {
+          showSnackMessage(context, "Email or Password is incorrect.", true);
+        }
+      } else {
+        if (mounted) {
+          showSnackMessage(context, "Login failed! Please try again.", true);
         }
       }
     }
   }
 
-  void _clearTextFields() {
-    _emailTEController.clear();
-    _passwordTEController.clear();
-  }
-
   @override
   void dispose() {
-    // TODO: implement dispose
-    _emailTEController.dispose();
-    _passwordTEController.dispose();
+    _emailInputTEController.dispose();
+    _passwordInputTEController.dispose();
     super.dispose();
   }
 }

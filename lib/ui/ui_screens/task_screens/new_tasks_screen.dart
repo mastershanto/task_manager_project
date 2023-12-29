@@ -1,187 +1,148 @@
-//todo: http and dio used for connecting project with api internet
-
 import 'package:flutter/material.dart';
-import 'package:task_manager_project/data/models/task_count_summary_list_model.dart';
+import 'package:task_manager_project/ui/widgets/task_items_card.dart';
+
 import '../../../data/models/task_count.dart';
 import '../../../data/models/task_list_model.dart';
+import '../../../data/models/task_list_status_count_model.dart';
 import '../../../data/network_caller/network_caller.dart';
 import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
-import '../../ui_widgets/profile_summary_card.dart';
-import '../../ui_widgets/summary_card.dart';
-import '../../ui_widgets/task_item_card.dart';
+
+import '../../../style/style.dart';
+import '../../widgets/profile_summary_card.dart';
+import '../../widgets/summary_card.dart';
 import 'add_new_tasks_screen.dart';
 
-class NewTasksScreen extends StatefulWidget {
-  const NewTasksScreen({super.key});
+class NewTaskScreen extends StatefulWidget {
+  const NewTaskScreen({super.key});
 
   @override
-  State<NewTasksScreen> createState() => _NewTasksScreenState();
+  State<NewTaskScreen> createState() => _NewTaskScreenState();
 }
 
-class _NewTasksScreenState extends State<NewTasksScreen> {
-  bool getNewTaskInProgress = false;
-  bool getTaskCountSummaryInProgress = false;
-
+class _NewTaskScreenState extends State<NewTaskScreen> {
+  bool getTaskListInProgress = false;
+  bool getTaskStatusCountInProgress = false;
+  TaskListStatusCountModel taskListStatusCountModel =
+  TaskListStatusCountModel();
   TaskListModel taskListModel = TaskListModel();
 
-  TaskCountSummaryListModel taskCountSummaryListModel =
-      TaskCountSummaryListModel();
-
-  Future<void> getTaskCountSummaryList() async {
+  Future<void> getTaskStatusCount() async {
+    getTaskStatusCountInProgress = true;
     if (mounted) {
-      setState(() {
-        getTaskCountSummaryInProgress = true;
-      });
+      setState(() {});
     }
-
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.getTaskStatusCount);
-
+    NetworkResponse response =
+    await NetworkCaller.getRequest(Urls.getTaskStatusCount);
     if (response.isSuccess) {
-      taskCountSummaryListModel =
-          TaskCountSummaryListModel.fromJson(response.jsonResponse);
+      taskListStatusCountModel =
+          TaskListStatusCountModel.fromJson(response.jsonResponse);
     }
-
+    getTaskStatusCountInProgress = false;
     if (mounted) {
-      setState(() {
-        getTaskCountSummaryInProgress = false;
-      });
+      setState(() {});
     }
   }
 
-  Future<void> getNewTaskList() async {
+  Future<void> getTaskList() async {
+    getTaskListInProgress = true;
     if (mounted) {
-      setState(() {
-        getNewTaskInProgress = true;
-        getTaskCountSummaryList();
-      });
+      setState(() {});
     }
-
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.getNewTasks);
-
+    NetworkResponse response = await NetworkCaller.getRequest(Urls.getTaskList);
     if (response.isSuccess) {
       taskListModel = TaskListModel.fromJson(response.jsonResponse);
     }
-
+    getTaskListInProgress = false;
     if (mounted) {
-      setState(() {
-        getNewTaskInProgress = false;
-      });
+      setState(() {});
     }
   }
 
   @override
   void initState() {
     super.initState();
-    getTaskCountSummaryList();
-    getNewTaskList();
+    getTaskStatusCount();
+    getTaskList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const AddNewTaskScreen()));
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: Column(
-        children: [
-          const ProfileSummaryCard(),
-          // const SingleChildScrollView(
-          //   scrollDirection: Axis.horizontal,
-          //   child: Padding(
-          //     padding: EdgeInsets.only(left: 16, right: 16),
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //       children: [
-          //         SummaryCard(
-          //           count: 39,
-          //           title: "New",
-          //         ),
-          //         SummaryCard(
-          //           count: 39,
-          //           title: "In Progress",
-          //         ),
-          //         SummaryCard(
-          //           count: 39,
-          //           title: "Completed",
-          //         ),
-          //         SummaryCard(
-          //           count: 39,
-          //           title: "Cancelled",
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          Visibility(
-            visible: getTaskCountSummaryInProgress ==
-                false /*&&
-                (taskCountSummaryListModel.taskCountList?.isNotEmpty ??
-                    false)*/
-            ,
-            replacement: const LinearProgressIndicator(),
-            child: RefreshIndicator(
-              onRefresh: getNewTaskList,
+
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            const ProfileSummeryCard(),
+            Visibility(
+              visible: getTaskStatusCountInProgress == false &&
+                  (taskListStatusCountModel.taskCountList?.isNotEmpty ?? false),
+              replacement: LinearProgressIndicator(
+                color: PrimaryColor.color,
+                backgroundColor: Colors.grey,
+              ),
               child: SizedBox(
-                height: 120,
+                height: 100,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: taskCountSummaryListModel.taskCountList?.length ?? 0,
+                  itemCount:
+                  taskListStatusCountModel.taskCountList?.length ?? 0,
                   itemBuilder: (context, index) {
-                    TaskCount? taskCount =
-                        taskCountSummaryListModel.taskCountList![index];
-                    //todo: Fetch inProgress data,
-                    //todo: Fetch completed data,
-                    //todo: Fetch cancel Data
+                    TaskCount taskCount =
+                    taskListStatusCountModel.taskCountList![index];
                     return FittedBox(
                       child: SummaryCard(
-                        count: taskCount.sum,
-                        title: taskCount.sId ?? "",
+                        count: taskCount.sum.toString(),
+                        title: taskCount.sId ?? '',
                       ),
                     );
                   },
                 ),
               ),
             ),
-          ),
-
-          Expanded(
-            child: Visibility(
-              visible: getNewTaskInProgress == false &&
-                  (taskCountSummaryListModel.taskCountList?.isNotEmpty ??
-                      false),
-              replacement: const Center(child: CircularProgressIndicator()),
-              child: ListView.builder(
-                itemCount: taskListModel.taskList?.length ?? 5,
-                itemBuilder: (context, index) {
-                  return TaskItemCard(
-                    task: taskListModel.taskList![index],
-                    onStatusChange: (){
-                      getNewTaskList();
+            Expanded(
+              child: Visibility(
+                visible: getTaskListInProgress == false,
+                replacement: Center(
+                  child: CircularProgressIndicator(color: PrimaryColor.color),
+                ),
+                child: RefreshIndicator(
+                  color: PrimaryColor.color,
+                  onRefresh: getTaskList,
+                  child: ListView.builder(
+                    itemCount: taskListModel.taskList?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      return TaskItemsCard(
+                        task: taskListModel.taskList![index],
+                        onStatusChangeRefresh: () {
+                          getTaskList();
+                          getTaskStatusCount();
+                        },
+                        taskUpdateStatusInProgress: (inProgress) {
+                          getTaskListInProgress = inProgress;
+                          setState(() {});
+                        },
+                      );
                     },
-                    showProgress: (inProgress){
-                      getNewTaskInProgress=inProgress;
-                      if(mounted){
-                        setState(() {
-                        });
-                      }
-                    },
-                  );
-                },
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddNewTaskScreen(),
+            ),
+          );
+        },
+        backgroundColor: PrimaryColor.color,
+        child: const Icon(Icons.add,color: Colors.white,),
+      ),
+    );
   }
 }

@@ -1,6 +1,3 @@
-///Todo: Json to Dart by (https://javiercbk.github.io/json_to_dart/)
-
-
 class UserModel {
   String? email;
   String? firstName;
@@ -8,7 +5,8 @@ class UserModel {
   String? mobile;
   String? photo;
 
-  UserModel({this.email, this.firstName, this.lastName, this.mobile, this.photo});
+  UserModel(
+      {this.email, this.firstName, this.lastName, this.mobile, this.photo});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     email = json['email'];

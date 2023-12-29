@@ -1,95 +1,74 @@
-// todo : m14 class-2:
-// todo: a. implement completed
-// todo: b.cancelled page and
-// todo: c.update task progress bar and
-//  todo: d. update after adding new task at same time
-
 import 'package:flutter/material.dart';
 
-import '../../../data/models/task.dart';
 import '../../../data/models/task_list_model.dart';
 import '../../../data/network_caller/network_caller.dart';
 import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
-import '../../ui_widgets/profile_summary_card.dart';
-import '../../ui_widgets/summary_card.dart';
-import '../../ui_widgets/task_item_card.dart';
+import '../../../style/style.dart';
+import '../../widgets/profile_summary_card.dart';
+import '../../widgets/task_items_card.dart';
 
-class ProgressTasksScreen extends StatefulWidget {
-  const ProgressTasksScreen({
-    super.key,
-    /*required this.task*/
-  });
+class ProgressTaskScreen extends StatefulWidget {
+  const ProgressTaskScreen({super.key});
 
-  // final Task task;
   @override
-  State<ProgressTasksScreen> createState() => _ProgressTasksScreenState();
+  State<ProgressTaskScreen> createState() => _ProgressTaskScreenState();
 }
 
-class _ProgressTasksScreenState extends State<ProgressTasksScreen> {
+class _ProgressTaskScreenState extends State<ProgressTaskScreen> {
+  bool getTaskListInProgress = false;
+  TaskListModel taskListModel = TaskListModel();
 
-  bool getProgressTaskInProgress = false;
-
-  TaskListModel taskListModel=TaskListModel();
-
-  Future<void> getProgressTaskList() async {
+  Future<void> getTaskList() async {
+    getTaskListInProgress = true;
     if (mounted) {
-      setState(() {
-        getProgressTaskInProgress = true;
-      });
+      setState(() {});
     }
-
-    final NetworkResponse response =
-    await NetworkCaller().getRequest(Urls.getProgressTasks);
-
+    NetworkResponse response =
+    await NetworkCaller.getRequest(Urls.getProgressTaskList);
     if (response.isSuccess) {
       taskListModel = TaskListModel.fromJson(response.jsonResponse);
     }
-
+    getTaskListInProgress = false;
     if (mounted) {
-      setState(() {
-        getProgressTaskInProgress = false;
-      });
+      setState(() {});
     }
   }
 
-
   @override
   void initState() {
-    getProgressTaskList();
-
     super.initState();
+    getTaskList();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
           children: [
-            const ProfileSummaryCard(),
+            const ProfileSummeryCard(),
             Expanded(
               child: Visibility(
-                visible: getProgressTaskInProgress == false,
-                replacement: const Center(child: CircularProgressIndicator()),
+                visible: getTaskListInProgress == false,
+                replacement: Center(
+                  child: CircularProgressIndicator(color: PrimaryColor.color),
+                ),
                 child: RefreshIndicator(
-                  onRefresh: getProgressTaskList,
+                  color: PrimaryColor.color,
+                  onRefresh: getTaskList,
                   child: ListView.builder(
-                    itemCount: taskListModel.taskList?.length ?? 5,
+                    itemCount: taskListModel.taskList?.length ?? 0,
                     itemBuilder: (context, index) {
-                      return TaskItemCard(
+                      return TaskItemsCard(
+                        statusColor: Colors.green,
                         task: taskListModel.taskList![index],
-                        onStatusChange: (){
-                          getProgressTaskList();
+                        onStatusChangeRefresh: () {
+                          getTaskList();
                         },
-                        showProgress: (inProgress){
-                          getProgressTaskInProgress=inProgress;
-                          if(mounted){
-                            setState(() {
-                            });
-                          }
+                        taskUpdateStatusInProgress: (inProgress) {
+                          getTaskListInProgress = inProgress;
+                          setState(() {});
                         },
                       );
                     },

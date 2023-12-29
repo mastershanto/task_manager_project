@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:task_manager_project/data/network_caller/network_caller.dart';
-import 'package:task_manager_project/data/network_caller/network_response.dart';
-import 'package:task_manager_project/data/utility/urls.dart';
-import 'package:task_manager_project/ui/ui_screens/task_screens/new_tasks_screen.dart';
 
+import 'package:flutter/material.dart';
 import '../../data/models/task.dart';
+import '../../data/network_caller/network_caller.dart';
+import '../../data/network_caller/network_response.dart';
+import '../../data/utility/urls.dart';
+
 
 enum TaskStatus {
   New,
@@ -33,7 +33,7 @@ class TaskItemCard extends StatefulWidget {
 class _TaskItemCardState extends State<TaskItemCard> {
   Future<void> updateTaskStatus(String status) async {
     widget.showProgress(true);
-    final NetworkResponse response = await NetworkCaller()
+    final NetworkResponse response = await NetworkCaller
         .getRequest(Urls.updateTaskStatus(widget.task.sId ?? "", status));
 
     if (response.isSuccess) {

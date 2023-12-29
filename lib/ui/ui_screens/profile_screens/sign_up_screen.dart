@@ -1,15 +1,12 @@
-//Todo: http and Dio used for connecting project with API Internet
-//todo for Assignment:  Email validation by RegEx
-//todo for Assignment:
-// validate the mobile no with 11 digits
-
 import 'package:flutter/material.dart';
+import 'package:task_manager_project/ui/widgets/snack_message.dart';
+
 import '../../../data/network_caller/network_caller.dart';
 import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
-import '../../ui_widgets/body_background.dart';
-import '../../ui_widgets/snack_message.dart';
-import 'forgot_password_screen.dart';
+import '../../../style/style.dart';
+import '../../controllers/input_validations.dart';
+import '../../widgets/background.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -19,203 +16,122 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _firstNameTEController = TextEditingController();
-  final TextEditingController _lastNameTEController = TextEditingController();
-  final TextEditingController _mobileTEController = TextEditingController();
-  final TextEditingController _passwordTEController = TextEditingController();
-  final GlobalKey<FormState> _globalFormKey = GlobalKey<FormState>();
+  final TextEditingController _emailInputTEController = TextEditingController();
+  final TextEditingController _firstNameInputTEController =
+  TextEditingController();
+  final TextEditingController _lastNameInputTEController =
+  TextEditingController();
+  final TextEditingController _mobileNumberInputTEController =
+  TextEditingController();
+  final TextEditingController _passwordInputTEController =
+  TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool _signUpInProgress = false;
+  bool isSignUpInProgress = false;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: BodyBackground(
-          child: Container(
-            padding: const EdgeInsets.all(24),
+    return Scaffold(
+      body: Background(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 40,
+          ),
+          child: SafeArea(
             child: SingleChildScrollView(
               child: Form(
-                key: _globalFormKey,
+                key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 80,
-                    ),
-                    Text(
-                      "Join with us",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    Text("Join Us",
+                        style: Theme.of(context).textTheme.bodyLarge),
+                    const SizedBox(height: 16),
                     TextFormField(
-                      controller: _emailTEController,
+                      controller: _emailInputTEController,
                       keyboardType: TextInputType.emailAddress,
-                      //todo: validate email address with regex
-                      validator: (String? value) {
-                        if (value?.trim().isEmpty ?? true) {
-                          return "Enter your valid email!";
-                        }
-                        const pattern =
-                            r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
-                            r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
-                            r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
-                            r'[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4]'
-                            r'[0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9]'
-                            r'[0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\'
-                            r'x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])';
-
-                        final regex = RegExp(pattern);
-                        if (value!.isNotEmpty && !regex.hasMatch(value)) {
-                          return "Enter email like tm@email.com";
-                        }
-
-                        return null;
-                      },
                       decoration: const InputDecoration(
                         hintText: "Email",
-                        prefixIcon: Icon(Icons.email_outlined),
                       ),
+                      validator: FormValidation.emailValidation,
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 8),
                     TextFormField(
-                      controller: _firstNameTEController,
-                      keyboardType: TextInputType.text,
-                      obscureText: false,
-                      validator: (String? value) {
-                        if (value?.trim().isEmpty ?? true) {
-                          return "Enter your first name!";
-                        }
-                        return null;
-                      },
+                      controller: _firstNameInputTEController,
                       decoration: const InputDecoration(
-                        hintText: "First name ",
+                        hintText: "First Name",
                       ),
+                      validator: FormValidation.inputValidation,
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 8),
                     TextFormField(
-                      controller: _lastNameTEController,
-                      keyboardType: TextInputType.text,
-                      obscureText: false,
-                      validator: (String? value) {
-                        if (value?.trim().isEmpty ?? true) {
-                          return "Enter your last name!";
-                        }
-                        return null;
-                      },
+                      controller: _lastNameInputTEController,
                       decoration: const InputDecoration(
-                        hintText: "Last name",
+                        hintText: "Last Name",
                       ),
+                      validator: FormValidation.inputValidation,
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 8),
                     TextFormField(
-                      controller: _mobileTEController,
-                      keyboardType: TextInputType.phone,
-                      obscureText: false,
-                      //todo: validate the mobile no with 11 digits
-                      validator: (String? value) {
-                        if (value?.trim().isEmpty ?? true) {
-                          return "Enter your mobile number!";
-                        }
-                        if (value!.length != 11) {
-                          return "Mobile number must be 11 digit.!";
-                        }
-                        if (int.tryParse(value) == null) {
-                          return "Mobile number must be numeric(a-z or A-Z).!";
-                        }
-
-                        return null;
-                      },
+                      controller: _mobileNumberInputTEController,
+                      keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        hintText: "Mobile",
+                        hintText: "Mobile Name",
                       ),
+                      validator: FormValidation.phoneNumberValidation,
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 8),
                     TextFormField(
-                      controller: _passwordTEController,
                       obscureText: true,
-                      validator: (String? value) {
-                        if (value?.isEmpty ?? true) {
-                          return "Enter your valid password!";
-                        }
-
-                        if (value!.length < 6) {
-                          return "Enter password at least 6 letters!";
-                        }
-                        return null;
-                      },
+                      controller: _passwordInputTEController,
                       decoration: const InputDecoration(
                         hintText: "Password",
                       ),
+                      validator: FormValidation.inputValidation,
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Visibility(
-                        visible: _signUpInProgress == false,
-                        replacement: const Center(
-                          child: CircularProgressIndicator(),
+                    const SizedBox(height: 8),
+                    Visibility(
+                      visible: isSignUpInProgress == false,
+                      replacement: Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: PrimaryColor.color,
+                          ),
                         ),
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
                         child: ElevatedButton(
-                            onPressed: () {
-                              _signUp();
-                            },
-                            child:
-                                const Icon(Icons.arrow_circle_right_outlined)),
+                          onPressed: _signUp,
+                          child: const Icon(Icons.arrow_circle_right_outlined,color: Colors.white,),
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 48,
-                    ),
-                    Center(
-                        child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ForgotPasswordScreen()));
-                      },
-                      child: const Text(
-                        "Forgot Password?",
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    )),
+                    const SizedBox(height: 35),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("have an account?",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16)),
+                        const Text(
+                          "Have account?",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: const Text(
-                            "Sing In",
-                            style: TextStyle(fontSize: 16),
+                          child: Text(
+                            "Sign in",
+                            style: TextStyle(color: PrimaryColor.color),
                           ),
                         ),
                       ],
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -227,66 +143,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _signUp() async {
-    if (_globalFormKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
+      isSignUpInProgress = true;
       if (mounted) {
-        setState(() {
-          _signUpInProgress = true;
-        });
+        setState(() {});
       }
-      final NetworkResponse response = await NetworkCaller().postRequest(
+
+      final NetworkResponse response = await NetworkCaller.postRequest(
         Urls.registration,
         body: {
-          "firstName": _firstNameTEController.text.trim(),
-          "lastName": _lastNameTEController.text.trim(),
-          "email": _emailTEController.text.trim(),
-          "mobile": _mobileTEController.text.trim(),
-          "password": _passwordTEController.text,
+          "email": _emailInputTEController.text.trim(),
+          "firstName": _firstNameInputTEController.text.trim(),
+          "lastName": _lastNameInputTEController.text.trim(),
+          "mobile": _mobileNumberInputTEController.text.trim(),
+          "password": _passwordInputTEController.text,
         },
       );
-
+      isSignUpInProgress = false;
       if (mounted) {
-        setState(() {
-          _signUpInProgress = false;
-        });
+        setState(() {});
       }
-
-      if (response.isSuccess) {
-        _clearTextFields();
-        if (mounted) {
-          showSnackMessage(context, "Account has been created! Please login");
+      if (mounted) {
+        if (response.isSuccess) {
+          _clearInputText();
+          showSnackMessage(
+            context,
+            "Account Created Successfully! Please login in",
+          );
         }
       } else {
         if (mounted) {
-          showSnackMessage(context, "Account creation failed! Try again.",
-              isError: true);
+          showSnackMessage(
+              context, "Account creation failed! Please try again.", true);
         }
       }
-
-      // Navigator.pushAndRemoveUntil(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (context) =>
-      //         const PinVerificationScreen()),
-      //         (context) => false);
     }
   }
 
-  void _clearTextFields() {
-    _emailTEController.clear();
-    _firstNameTEController.clear();
-    _lastNameTEController.clear();
-    _mobileTEController.clear();
-    _passwordTEController.clear();
+  void _clearInputText() {
+    _emailInputTEController.clear();
+    _firstNameInputTEController.clear();
+    _lastNameInputTEController.clear();
+    _mobileNumberInputTEController.clear();
+    _passwordInputTEController.clear();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _emailInputTEController.dispose();
+    _firstNameInputTEController.dispose();
+    _lastNameInputTEController.dispose();
+    _mobileNumberInputTEController.dispose();
+    _passwordInputTEController.dispose();
     super.dispose();
-    _emailTEController.dispose();
-    _firstNameTEController.dispose();
-    _lastNameTEController.dispose();
-    _passwordTEController.dispose();
-    _passwordTEController.dispose();
   }
 }

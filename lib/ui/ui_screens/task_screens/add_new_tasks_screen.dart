@@ -1,16 +1,13 @@
-//Todo: http and Dio used for connecting project with API Internet
-
 import 'package:flutter/material.dart';
-import 'package:task_manager_project/data/network_caller/network_response.dart';
-import 'package:task_manager_project/ui/ui_screens/task_screens/new_tasks_screen.dart';
-import 'package:task_manager_project/ui/ui_widgets/snack_message.dart';
 
 import '../../../data/network_caller/network_caller.dart';
+import '../../../data/network_caller/network_response.dart';
 import '../../../data/utility/urls.dart';
-import '../../ui_widgets/body_background.dart';
-import '../../ui_widgets/profile_summary_card.dart';
-
-// import 'forgot_password_screen.dart';
+import '../../../style/style.dart';
+import '../../controllers/input_validations.dart';
+import '../../widgets/background.dart';
+import '../../widgets/profile_summary_card.dart';
+import '../../widgets/snack_message.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
   const AddNewTaskScreen({super.key});
@@ -20,94 +17,72 @@ class AddNewTaskScreen extends StatefulWidget {
 }
 
 class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
-  final TextEditingController _subjectTEController = TextEditingController();
-  final TextEditingController _descriptionTEController =
-      TextEditingController();
+  final TextEditingController _subjectInputTEController =
+  TextEditingController();
+  final TextEditingController _descriptionInputTEController =
+  TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  bool _createNewTaskInProgress = false;
+  bool taskInProgress = false;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-      body: Form(
-        key: _formKey,
+    return Scaffold(
+      body: SafeArea(
         child: Column(
           children: [
-            const ProfileSummaryCard(
-              enableOnTab: false,
-            ),
+            const ProfileSummeryCard(),
             Expanded(
-              child: BodyBackground(
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 60,
-                        ),
-                        Text(
-                          "Add New Task",
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        TextFormField(
-                          controller: _subjectTEController,
-                          validator: (String? value) {
-                            if (value!.trim().isEmpty) {
-                              return "Enter any the subject of  your task!";
-                            }
-                            return null;
-                          },
-                          keyboardType: TextInputType.text,
-                          decoration: const InputDecoration(
-                            hintText: "Subject",
+              child: Background(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 40,
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Add New Task",
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        TextFormField(
-                          controller: _descriptionTEController,
-                          validator: (String? value) {
-                            if (value!.trim().isEmpty) {
-                              return "Enter the description of  your task!";
-                            }
-                            return null;
-                          },
-                          maxLines: 8,
-                          decoration: const InputDecoration(
-                            hintText: "Description",
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _subjectInputTEController,
+                            decoration: const InputDecoration(
+                              hintText: "Subject",
+                            ),
+                            validator: FormValidation.inputValidation,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        SizedBox(
-
-                          ///todo: How to show post Request headers time limit
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _descriptionInputTEController,
+                            maxLines: 5,
+                            decoration: const InputDecoration(
+                                hintText: "Description"),
+                            validator: FormValidation.inputValidation,
+                          ),
+                          const SizedBox(height: 8),
+                          SizedBox(
                             width: double.infinity,
                             child: Visibility(
-                              visible: _createNewTaskInProgress == false,
-                              replacement: const Center(
-                                child: CircularProgressIndicator(),
+                              visible: taskInProgress == false,
+                              replacement: Center(
+                                child: CircularProgressIndicator(
+                                    color: PrimaryColor.color),
                               ),
                               child: ElevatedButton(
-                                  onPressed: () {
-                                    createTask();
-                                  },
-                                  child: const Icon(
-                                      Icons.arrow_circle_right_outlined)),
-                            )),
-                        const SizedBox(
-                          height: 48,
-                        ),
-                      ],
+                                onPressed: _createNewTask,
+                                child: const Icon(
+                                    Icons.arrow_circle_right_outlined,color: Colors.white,),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -116,57 +91,46 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
           ],
         ),
       ),
-    ));
+    );
   }
 
-  Future<void> createTask() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  Future<void> _createNewTask() async {
+    if (_formKey.currentState!.validate()) {
+      taskInProgress = true;
       if (mounted) {
-        setState(() {
-          _createNewTaskInProgress = true;
-        });
+        setState(() {});
       }
+
       final NetworkResponse response =
-          await NetworkCaller().postRequest(Urls.createNewTask, body: {
-        "title": _subjectTEController.text.trim(),
-        "description": _descriptionTEController.text.trim(),
+      await NetworkCaller.postRequest(Urls.createNewTask, body: {
+        "title": _subjectInputTEController.text.trim(),
+        "description": _descriptionInputTEController.text.trim(),
         "status": "New",
       });
 
+      taskInProgress = false;
       if (mounted) {
-        setState(() {
-          _createNewTaskInProgress = false;
-        });
+        setState(() {});
       }
 
       if (response.isSuccess) {
-        _clearTextFields();
-
+        _subjectInputTEController.clear();
+        _descriptionInputTEController.clear();
         if (mounted) {
-          showSnackMessage(context, "New task added successfully! ",
-              isError: false);
+          showSnackMessage(context, "New Task Added Successfully!");
         }
       } else {
         if (mounted) {
-          showSnackMessage(context, "Create new task failed! try again.",
-              isError: true);
+          showSnackMessage(context, "Failed! Please Try Again.", true);
         }
       }
-
-  }
-
-  void _clearTextFields() {
-    _subjectTEController.clear();
-    _descriptionTEController.clear();
+    }
   }
 
   @override
   void dispose() {
-    _subjectTEController.dispose();
-    _descriptionTEController.dispose();
-
+    _subjectInputTEController.dispose();
+    _descriptionInputTEController.dispose();
     super.dispose();
   }
 }
